@@ -2,9 +2,8 @@ version: '3.7'
 
 services:
   movie_service:
-    image: movie-service
-    volumes:
-      - ./movie-service/:/app/
+    image: ${DOCKER_HUB_ID}/movie-service:${DOCKER_TAG}
+    restart: always
     ports:
       - 8001:8000
     environment:
@@ -12,6 +11,11 @@ services:
       - CAST_SERVICE_HOST_URL=http://cast_service:8000/api/v1/casts/
     depends_on:
       - movie_db
+    healthcheck:
+      test: curl http://localhost:8000/ || exit 1
+      interval: 1s
+      timeout: 2s
+      retries: 10
 
   movie_db:
     image: postgres:12.1-alpine
@@ -23,15 +27,19 @@ services:
       - POSTGRES_DB=movie_db_dev
 
   cast_service:
-    image: cast-service
-    volumes:
-      - ./cast-service/:/app/
+    image: ${DOCKER_HUB_ID}/cast-service:${DOCKER_TAG}
+    restart: always
     ports:
       - 8002:8000
     environment:
       - DATABASE_URI=postgresql://cast_db_username:cast_db_password@cast_db/cast_db_dev
     depends_on:
       - cast_db
+    healthcheck:
+      test: curl http://localhost:8000/ || exit 1
+      interval: 1s
+      timeout: 2s
+      retries: 10
 
   cast_db:
     image: postgres:12.1-alpine
@@ -43,12 +51,17 @@ services:
       - POSTGRES_DB=cast_db_dev
 
   nginx:
-    image: proxy
+    image: ${DOCKER_HUB_ID}/proxy:${DOCKER_TAG}
     ports:
       - "8080:8080"
     depends_on:
       - cast_service
       - movie_service
+    healthcheck:
+      test: curl http://localhost:8080/ || exit 1
+      interval: 1s
+      timeout: 2s
+      retries: 10
 
 volumes:
   postgres_data_movie:

@@ -26,5 +26,34 @@ pipeline {
                 }
             }
         }
+        stage("Test") {
+            steps {
+                sh '''
+                   docker compose up -d --wait
+                   curl -s  http://localhost:8080/api/v1/movies/2/ > actual-result.json
+                   diff tests/expected-result.json actual-result.json
+                   docker compose down
+                '''
+            }
+        }
+        stage("Docker push") {
+            environment {
+                DOCKER_HUB_PASS = credentials("DOCKER_HUB_PASS")
+            }
+            steps {
+                sh '''
+                    docker login -u $DOCKER_HUB_ID -p $DOCKER_HUB_TOKEN
+                    docker push -q $DOCKER_HUB_ID/cast-service:$DOCKER_TAG
+                    docker push -q $DOCKER_HUB_ID/movie-service:$DOCKER_TAG
+                    docker push -q $DOCKER_HUB_ID/proxy:$DOCKER_TAG
+                '''
+            }
+        }
+    }
+
+    post {
+        always {
+            sh "docker compose down"
+        }
     }
 }
