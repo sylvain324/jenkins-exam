@@ -4,8 +4,6 @@ services:
   movie_service:
     image: ${DOCKER_HUB_ID}/movie-service:${DOCKER_TAG}
     restart: always
-    ports:
-      - 8001:8000
     environment:
       - DATABASE_URI=postgresql://movie_db_username:movie_db_password@movie_db/movie_db_dev
       - CAST_SERVICE_HOST_URL=http://cast_service:8000/api/v1/casts/
@@ -29,8 +27,6 @@ services:
   cast_service:
     image: ${DOCKER_HUB_ID}/cast-service:${DOCKER_TAG}
     restart: always
-    ports:
-      - 8002:8000
     environment:
       - DATABASE_URI=postgresql://cast_db_username:cast_db_password@cast_db/cast_db_dev
     depends_on:
@@ -53,7 +49,7 @@ services:
   nginx:
     image: ${DOCKER_HUB_ID}/proxy:${DOCKER_TAG}
     ports:
-      - "8080:8080"
+      - "8092:8080"
     depends_on:
       - cast_service
       - movie_service

@@ -30,7 +30,7 @@ pipeline {
             steps {
                 sh '''
                    docker compose up -d --wait
-                   curl -s  http://localhost:8080/api/v1/movies/2/ > actual-result.json
+                   curl -s  http://localhost:8092/api/v1/movies/2/ > actual-result.json
                    diff tests/expected-result.json actual-result.json
                    docker compose down
                 '''
