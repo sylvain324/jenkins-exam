@@ -1,7 +1,7 @@
 pipeline {
     agent any
 
-    environnement {
+    environment {
         DOCKER_HUB_ID = "lzmaurywehzexznjan"
         DOCKER_TAG = "v.0.${BUILD_ID}"
     }
