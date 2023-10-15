@@ -42,11 +42,19 @@ pipeline {
             }
             steps {
                 sh '''
-                    docker login -u $DOCKER_HUB_ID -p $DOCKER_HUB_TOKEN
+                    docker login -u $DOCKER_HUB_ID -p $DOCKER_HUB_PASS
                     docker push -q $DOCKER_HUB_ID/cast-service:$DOCKER_TAG
                     docker push -q $DOCKER_HUB_ID/movie-service:$DOCKER_TAG
                     docker push -q $DOCKER_HUB_ID/proxy:$DOCKER_TAG
                 '''
+            }
+        }
+        stage("Deploiement en dev") {
+            environment {
+                KUBECONFIG = credentials("kubeconfig")
+            }
+            steps {
+                echo "$KUBECONFIG"
             }
         }
     }
