@@ -101,7 +101,7 @@ pipeline {
                   helm upgrade --install v1.0 helm --namespace $ENVIRONNEMENT --set version="$DOCKER_TAG" --set namespace="$ENVIRONNEMENT" --set ingress_host="$ENVIRONNEMENT.mai23-devops.cloudns.ph"
                 '''
             }
-            when { branch "*/main" }
+            when { branch "main" }
         }
     }
 
