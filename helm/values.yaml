@@ -1,0 +1,4 @@
+# Default values
+ingress_host: HOST
+namespace: NAMESPACE
+version: v1.0

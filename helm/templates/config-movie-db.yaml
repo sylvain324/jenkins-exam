@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: config-movie-db
+  namespace: {{ .Values.namespace }}
+data:
+  POSTGRES_USER: "movie_db_username"
+  POSTGRES_DB: "movie_db_dev"

@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cast
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: cast
+  template:
+    metadata:
+      labels:
+        app: cast
+    spec:
+      containers:
+        - image: lzmaurywehzexznjan/cast-service:{{ .Values.version }}
+          name: cast
+          ports:
+            - containerPort: 8000
+          env:
+            - name: DATABASE_URI
+              valueFrom:
+                secretKeyRef:
+                  key: CAST_DB_URI
+                  name: secrets

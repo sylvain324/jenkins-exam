@@ -1,12 +1,12 @@
 version: '3.7'
 
 services:
-  movie_service:
+  movie-service:
     image: ${DOCKER_HUB_ID}/movie-service:${DOCKER_TAG}
     restart: always
     environment:
       - DATABASE_URI=postgresql://movie_db_username:movie_db_password@movie_db/movie_db_dev
-      - CAST_SERVICE_HOST_URL=http://cast_service:8000/api/v1/casts/
+      - CAST_SERVICE_HOST_URL=http://cast-service:8000/api/v1/casts/
     depends_on:
       - movie_db
     healthcheck:
@@ -24,7 +24,7 @@ services:
       - POSTGRES_PASSWORD=movie_db_password
       - POSTGRES_DB=movie_db_dev
 
-  cast_service:
+  cast-service:
     image: ${DOCKER_HUB_ID}/cast-service:${DOCKER_TAG}
     restart: always
     environment:
@@ -51,8 +51,8 @@ services:
     ports:
       - "8092:8080"
     depends_on:
-      - cast_service
-      - movie_service
+      - cast-service
+      - movie-service
     healthcheck:
       test: curl http://localhost:8080/ || exit 1
       interval: 1s

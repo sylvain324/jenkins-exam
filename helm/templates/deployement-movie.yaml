@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: movie
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: movie
+  template:
+    metadata:
+      labels:
+        app: movie
+    spec:
+      containers:
+        - image: lzmaurywehzexznjan/movie-service:{{ .Values.version }}
+          name: movie
+          ports:
+            - containerPort: 8000
+          env:
+            - name: DATABASE_URI
+              valueFrom:
+                secretKeyRef:
+                  key: CAST_DB_URI
+                  name: secrets
+          envFrom:
+            - configMapRef:
+                name: config-movie

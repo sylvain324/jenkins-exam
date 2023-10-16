@@ -1,0 +1,1 @@
+Le service est disponible sur https://{{.Values.ingress_host}}

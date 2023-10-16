@@ -49,13 +49,31 @@ pipeline {
                 '''
             }
         }
+
         stage("Deploiement en dev") {
+            environment {
+                KUBECONFIG = credentials("kubeconfig")
+                ENVIRONNEMENT = "dev"
+            }
+            steps {
+                sh 'find . -name "$KUBECONFIG"'
+                sh '''
+                  cat $KUBECONFIG
+                  echo $KUBECONFIG
+                  chmod 0600 $KUBECONFIG
+                  helm upgrade --install v1.0 movie --namespace $ENVIRONNEMENT --set version="$DOCKER_TAG" --set namespace="$ENVIRONNEMENT" --set ingress_host="$ENVIRONNEMENT.mai23-devops.cloudns.ph"
+                '''
+            }
+        }
+        stage("Deploiement en prod") {
             environment {
                 KUBECONFIG = credentials("kubeconfig")
             }
             steps {
-                echo "$KUBECONFIG"
+                input 'Lancer le déploiement en production ?'
+                sh 'find . -name "$KUBECONFIG"
             }
+            when { branch "*/main" }
         }
     }
 
