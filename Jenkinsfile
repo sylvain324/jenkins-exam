@@ -62,7 +62,7 @@ pipeline {
                 '''
             }
 
-            when { branch "*" }
+            when { branch "master" }
         }
 
         stage("Deploiement en qa") {
