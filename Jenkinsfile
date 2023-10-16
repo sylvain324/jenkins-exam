@@ -61,6 +61,8 @@ pipeline {
                   helm upgrade --install v1.0 helm --namespace $ENVIRONNEMENT --set version="$DOCKER_TAG" --set namespace="$ENVIRONNEMENT" --set ingress_host="$ENVIRONNEMENT.mai23-devops.cloudns.ph"
                 '''
             }
+
+            when { branch "*" }
         }
 
         stage("Deploiement en qa") {
@@ -74,6 +76,7 @@ pipeline {
                   helm upgrade --install v1.0 helm --namespace $ENVIRONNEMENT --set version="$DOCKER_TAG" --set namespace="$ENVIRONNEMENT" --set ingress_host="$ENVIRONNEMENT.mai23-devops.cloudns.ph"
                 '''
             }
+            when { branch "origin/main" }
         }
 
         stage("Deploiement en staging") {
@@ -82,13 +85,12 @@ pipeline {
                 ENVIRONNEMENT = "staging"
             }
             steps {
-                echo "$BRANCH_NAME"
-                echo "${BRANCH_NAME}"
                 sh '''
                   chmod 0600 $KUBECONFIG
                   helm upgrade --install v1.0 helm --namespace $ENVIRONNEMENT --set version="$DOCKER_TAG" --set namespace="$ENVIRONNEMENT" --set ingress_host="$ENVIRONNEMENT.mai23-devops.cloudns.ph"
                 '''
             }
+            when { branch "*/main" }
         }
 
         stage("Deploiement en prod") {
