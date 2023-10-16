@@ -35,6 +35,11 @@ pipeline {
                    docker compose down
                 '''
             }
+            post {
+                always {
+                    sh "docker compose down"
+                }
+            }
         }
         stage("Docker push") {
             environment {
@@ -61,8 +66,6 @@ pipeline {
                   helm upgrade --install v1.0 helm --namespace $ENVIRONNEMENT --set version="$DOCKER_TAG" --set namespace="$ENVIRONNEMENT" --set ingress_host="$ENVIRONNEMENT.mai23-devops.cloudns.ph"
                 '''
             }
-
-            when { branch "master" }
         }
 
         stage("Deploiement en qa") {
@@ -76,7 +79,6 @@ pipeline {
                   helm upgrade --install v1.0 helm --namespace $ENVIRONNEMENT --set version="$DOCKER_TAG" --set namespace="$ENVIRONNEMENT" --set ingress_host="$ENVIRONNEMENT.mai23-devops.cloudns.ph"
                 '''
             }
-            when { branch "origin/main" }
         }
 
         stage("Deploiement en staging") {
@@ -90,7 +92,6 @@ pipeline {
                   helm upgrade --install v1.0 helm --namespace $ENVIRONNEMENT --set version="$DOCKER_TAG" --set namespace="$ENVIRONNEMENT" --set ingress_host="$ENVIRONNEMENT.mai23-devops.cloudns.ph"
                 '''
             }
-            when { branch "*/main" }
         }
 
         stage("Deploiement en prod") {
@@ -106,12 +107,6 @@ pipeline {
                 '''
             }
             when { branch "main" }
-        }
-    }
-
-    post {
-        always {
-            sh "docker compose down"
         }
     }
 }
