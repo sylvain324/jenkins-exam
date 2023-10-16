@@ -71,7 +71,6 @@ pipeline {
             }
             steps {
                 input 'Lancer le déploiement en production ?'
-                sh 'find . -name "$KUBECONFIG"
             }
             when { branch "*/main" }
         }
