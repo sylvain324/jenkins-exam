@@ -56,19 +56,50 @@ pipeline {
                 ENVIRONNEMENT = "dev"
             }
             steps {
-                sh 'find . -name "$KUBECONFIG"'
                 sh '''
                   chmod 0600 $KUBECONFIG
                   helm upgrade --install v1.0 helm --namespace $ENVIRONNEMENT --set version="$DOCKER_TAG" --set namespace="$ENVIRONNEMENT" --set ingress_host="$ENVIRONNEMENT.mai23-devops.cloudns.ph"
                 '''
             }
         }
+
+        stage("Deploiement en qa") {
+            environment {
+                KUBECONFIG = credentials("kubeconfig")
+                ENVIRONNEMENT = "qa"
+            }
+            steps {
+                sh '''
+                  chmod 0600 $KUBECONFIG
+                  helm upgrade --install v1.0 helm --namespace $ENVIRONNEMENT --set version="$DOCKER_TAG" --set namespace="$ENVIRONNEMENT" --set ingress_host="$ENVIRONNEMENT.mai23-devops.cloudns.ph"
+                '''
+            }
+        }
+
+        stage("Deploiement en staging") {
+            environment {
+                KUBECONFIG = credentials("kubeconfig")
+                ENVIRONNEMENT = "staging"
+            }
+            steps {
+                sh '''
+                  chmod 0600 $KUBECONFIG
+                  helm upgrade --install v1.0 helm --namespace $ENVIRONNEMENT --set version="$DOCKER_TAG" --set namespace="$ENVIRONNEMENT" --set ingress_host="$ENVIRONNEMENT.mai23-devops.cloudns.ph"
+                '''
+            }
+        }
+
         stage("Deploiement en prod") {
             environment {
                 KUBECONFIG = credentials("kubeconfig")
+                ENVIRONNEMENT = "prod"
             }
             steps {
                 input 'Lancer le déploiement en production ?'
+                sh '''
+                  chmod 0600 $KUBECONFIG
+                  helm upgrade --install v1.0 helm --namespace $ENVIRONNEMENT --set version="$DOCKER_TAG" --set namespace="$ENVIRONNEMENT" --set ingress_host="$ENVIRONNEMENT.mai23-devops.cloudns.ph"
+                '''
             }
             when { branch "*/main" }
         }
